@@ -5,13 +5,9 @@ public class PascalArray {
   int[] arrayInterno;
 
   public PascalArray(int n1, int n2) {
-    if (n1 > n2) {
-      limiteSuperior = n1;
-      limiteInferior = n2;
-    } else { // Fazemos isso para suportar um array ao "contrário"
-      limiteSuperior = n2;
-      limiteInferior = n1;
-    }
+    // Fazemos isso para suportar um array com indices ao "contrário"
+    limiteSuperior = Math.max(n1, n2);
+    limiteInferior = Math.min(n1, n2);
 
     tamanho = limiteSuperior - limiteInferior + 1;
     arrayInterno = new int[tamanho];
