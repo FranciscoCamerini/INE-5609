@@ -17,7 +17,7 @@ PascalArray negArray = new PascalArray(-3, -1);
 ```
 ## `PascalArray.get(int "index")`
 
-The `get()` class method get the value from the specified index. If the index is out of range this method will raise an Exception.
+The `get()` class method gets the value from the specified index. If the index is out of range this method will raise an Exception.
 
 ## `PascalArray.set(int "index", int "value")`
 
