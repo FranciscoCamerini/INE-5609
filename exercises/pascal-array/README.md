@@ -8,7 +8,7 @@ Every slot in the array is initialized with value `0`.
 
 PascalArray posArray = new PascalArray(1, 5);
 // posArray -> [0, 0, 0, 0, 0]
-// indexes   1  2  3  4  5
+// indexes      1  2  3  4  5
 
 PascalArray negArray = new PascalArray(-3, -1);
 // negArray -> [0, 0, 0]
@@ -16,10 +16,12 @@ PascalArray negArray = new PascalArray(-3, -1);
 
 ```
 ## `PascalArray.get(int "index")`
-    The `get` class method get the value from the specified index. If the index is out of range this method will raise an Exception.
+
+The `get()` class method get the value from the specified index. If the index is out of range this method will raise an Exception.
 
 ## `PascalArray.set(int "index", int "value")`
-    The `set` class method sets a value in the specified index. If the index is out of range this method will raise an Exception.
+
+The `set()` class method sets a value in the specified index. If the index is out of range this method will raise an Exception.
 
 ```java
 
