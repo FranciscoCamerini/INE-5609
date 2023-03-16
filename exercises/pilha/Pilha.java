@@ -41,4 +41,8 @@ public class Pilha {
 
     return arrayInterno[topo];
   }
+
+  public int size() {
+    return topo + 1;
+  }
 }
