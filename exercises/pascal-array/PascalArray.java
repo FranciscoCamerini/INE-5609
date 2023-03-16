@@ -2,7 +2,7 @@ public class PascalArray {
   int limiteInferior;
   int limiteSuperior;
   int tamanho;
-  int[] arrayInterno;
+  private int[] arrayInterno;
 
   public PascalArray(int n1, int n2) {
     // Fazemos isso para suportar um array com indices ao "contrário"
