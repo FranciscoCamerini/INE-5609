@@ -16,7 +16,7 @@ class Lista:
         iterador = self.__primeiro
         while iterador.valor is not None:
             string += f'({iterador.valor})' if self.__cursor == iterador else f'{iterador.valor}'
-            if iterador.proximo:
+            if iterador.proximo and iterador.proximo.valor:
                 string += ' -> '
                 iterador = iterador.proximo
             else:
@@ -58,6 +58,14 @@ class Lista:
         if self.cheia():
             raise ListaCheiaException()
 
+    def __proximo_cursor(self) -> any:
+        if self.__cursor.proximo and self.__cursor.proximo.valor:
+            return self.__cursor.proximo
+
+    def __anterior_cursor(self) -> any:
+        if self.__cursor.anterior and self.__cursor.anterior.valor:
+            return self.__cursor.anterior
+
     @property
     def comprimento(self) -> int:
         return self.__n_elementos
@@ -85,10 +93,12 @@ class Lista:
         self.__avisa_se_cheia()
         elemento = Elemento(valor=valor, proximo=self.__cursor)
 
-        if anterior_do_atual := self.__cursor.anterior:
-            anterior_do_atual.proximo = elemento
+        if anterior := self.__anterior_cursor():
+            anterior = elemento
         else:
             self.__primeiro = elemento
+            if not self.__ultimo.valor:
+                self.__ultimo = elemento
 
         self.__cursor.anterior = elemento
         self.__cursor = elemento
@@ -98,9 +108,9 @@ class Lista:
         self.__avisa_se_cheia()
         elemento = Elemento(valor=valor, anterior=self.__cursor)
 
-        if proximo_do_atual := self.__cursor.proximo:
-            proximo_do_atual.anterior = elemento
-            elemento.proximo = proximo_do_atual
+        if proximo := self.__proximo_cursor():
+            proximo.anterior = elemento
+            elemento.proximo = proximo
         else:
             self.__ultimo = elemento
 
@@ -124,16 +134,18 @@ class Lista:
 
     def excluir_atual(self) -> None:
         atual = self.__cursor
+        anterior = self.__anterior_cursor()
+        proximo = self.__proximo_cursor()
 
-        if atual.anterior and atual.proximo:
-            atual.anterior.proximo = atual.proximo
-            atual.proximo.anterior = atual.anterior
+        if anterior and proximo:
+            anterior.proximo = proximo
+            proximo.anterior = anterior
             self.__cursor = atual.proximo
-        elif proximo := atual.proximo:
+        elif proximo:
             proximo.anterior = None
             self.__cursor = proximo
             self.__primeiro = proximo
-        elif anterior := atual.anterior:
+        elif anterior:
             anterior.proximo = None
             self.__cursor = anterior
             self.__ultimo = anterior
