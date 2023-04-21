@@ -37,7 +37,7 @@ class Lista:
     def __move_cursor_posicao(self, pos) -> None:
         indice_ultimo = self.__n_elementos - 1
 
-        if pos < indice_ultimo / 2 and pos > 0:
+        if pos < indice_ultimo / 2 and pos >= 0:
             self.__move_cursor_inicio()
             self.__avanca_cursor(pos)
         else:
@@ -91,6 +91,7 @@ class Lista:
             self.__primeiro = elemento
 
         self.__cursor.anterior = elemento
+        self.__cursor = elemento
         self.__n_elementos += 1
 
     def inserir_apos_atual(self, valor) -> None:
@@ -104,6 +105,7 @@ class Lista:
             self.__ultimo = elemento
 
         self.__cursor.proximo = elemento
+        self.__cursor = elemento
         self.__n_elementos += 1
 
     def inserir_como_ultimo(self, valor) -> None:
