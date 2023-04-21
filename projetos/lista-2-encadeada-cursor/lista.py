@@ -14,7 +14,7 @@ class Lista:
 
         string = '['
         iterador = self.__primeiro
-        while iterador.valor:
+        while iterador.valor is not None:
             string += f'({iterador.valor})' if self.__cursor == iterador else f'{iterador.valor}'
             if iterador.proximo:
                 string += ' -> '
@@ -99,6 +99,7 @@ class Lista:
 
         if proximo_do_atual := self.__cursor.proximo:
             proximo_do_atual.anterior = elemento
+            elemento.proximo = proximo_do_atual
         else:
             self.__ultimo = elemento
 
