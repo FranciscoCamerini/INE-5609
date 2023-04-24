@@ -38,19 +38,19 @@ class ListaGloriosa:
             if anterior := self.__cursor.anterior:
                 self.__cursor = anterior
 
-    def move_cursor_posicao(self, pos) -> None:
+    def move_cursor_posicao(self, i) -> None:
         indice_ultimo = self.__n_elementos - 1
 
-        if pos < indice_ultimo / 2 and pos >= 0:
+        if i < indice_ultimo / 2 and i >= 0:
             self.move_cursor_inicio()
-            self.avanca_cursor(pos)
+            self.avanca_cursor(i)
         else:
             self.move_cursor_final()
-            if pos > 0:
-                self.retrocede_cursor(indice_ultimo - pos)
+            if i > 0:
+                self.retrocede_cursor(indice_ultimo - i)
             else:
-                pos *= -1
-                self.retrocede_cursor(pos -  1)
+                i *= -1
+                self.retrocede_cursor(i -  1)
 
     def move_cursor_inicio(self) -> None:
         self.__cursor = self.__primeiro
@@ -78,17 +78,17 @@ class ListaGloriosa:
     def acessa_atual(self) -> any:
         return self.__cursor.valor
 
-    def acessa_posicao(self, pos: int) -> any:
-        self.move_cursor_posicao(pos)
+    def acessa_posicao(self, i: int) -> any:
+        self.move_cursor_iicao(i)
         return self.acessa_atual()
 
-    def inserir_como_atual(self, valor) -> None:
+    def inserir_como_atual(self, valor: any) -> None:
         if not self.__cursor.valor:
             self.__n_elementos += 1
 
         self.__cursor.valor = valor
 
-    def inserir_antes_atual(self, valor) -> None:
+    def inserir_antes_atual(self, valor: any) -> None:
         self.__avisa_se_cheia()
         elemento = Elemento(valor=valor, proximo=self.__cursor)
 
@@ -103,7 +103,7 @@ class ListaGloriosa:
         self.__cursor = elemento
         self.__n_elementos += 1
 
-    def inserir_apos_atual(self, valor) -> None:
+    def inserir_apos_atual(self, valor: any) -> None:
         self.__avisa_se_cheia()
         elemento = Elemento(valor=valor, anterior=self.__cursor)
 
@@ -117,18 +117,18 @@ class ListaGloriosa:
         self.__cursor = elemento
         self.__n_elementos += 1
 
-    def inserir_como_ultimo(self, valor) -> None:
+    def inserir_como_ultimo(self, valor: any) -> None:
         self.move_cursor_final()
         self.inserir_apos_atual(valor)
 
-    def inserir_como_primeiro(self, valor) -> None:
+    def inserir_como_primeiro(self, valor: any) -> None:
         self.move_cursor_inicio()
         self.inserir_antes_atual(valor)
 
-    def inserir_posicao(self, pos, valor) -> None:
+    def inserir_posicao(self, i: int, valor: any) -> None:
         self.__avisa_se_cheia()
 
-        self.move_cursor_posicao(pos)
+        self.move_cursor_posicao(i)
         self.inserir_como_atual(valor)
 
     def excluir_atual(self) -> None:
@@ -159,11 +159,11 @@ class ListaGloriosa:
         self.move_cursor_final()
         self.excluir_atual()
 
-    def excluir_posicao(self, pos) -> None:
-        self.move_cursor_posicao(pos)
+    def excluir_posicao(self, i: int) -> None:
+        self.move_cursor_posicao(i)
         self.excluir_atual()
 
-    def excluir_elemento(self, valor) -> None:
+    def excluir_elemento(self, valor: any) -> None:
         # Excluir todos os elementos da lista com determinado valor
 
         self.move_cursor_inicio()
@@ -174,7 +174,7 @@ class ListaGloriosa:
             else:
                 self.avanca_cursor(1)
 
-    def busca(self, valor) -> bool:
+    def busca(self, valor: any) -> bool:
         self.move_cursor_inicio()
 
         for i in range(self.comprimento()):
@@ -184,7 +184,7 @@ class ListaGloriosa:
 
         return False
 
-    def posicao_de(self, valor) -> int:
+    def posicao_de(self, valor: any) -> int:
         self.move_cursor_inicio()
 
         for i in range(self.comprimento()):
