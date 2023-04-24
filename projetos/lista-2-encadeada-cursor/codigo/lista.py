@@ -1,13 +1,16 @@
 from .elemento import Elemento
-from .exceptions import ListaCheiaException, IndiceInexistenteException
+from .exceptions import ListaCheiaException, IndiceInexistenteException, ListaVaziaException
 
 class ListaGloriosa:
     def __init__(self, max):
+        # Para facilitar algumas operações criamos um elemento fake que será nosso cursor, primeiro e ultimo elemento no início.
+        elemento_inicial_fake = Elemento(valor=None)
+
         self.__max = max
         self.__n_elementos = 0
-        self.__primeiro = Elemento(valor=None)
-        self.__ultimo = Elemento(valor=None)
-        self.__cursor = self.__primeiro
+        self.__primeiro = elemento_inicial_fake
+        self.__ultimo = elemento_inicial_fake
+        self.__cursor = elemento_inicial_fake
 
     def __str__(self):
         # Printa a lista, elemento onde o cursor está é cercado por '()'
@@ -24,9 +27,19 @@ class ListaGloriosa:
 
         return string + ']'
 
+    def primeiro(self):
+        return self.__primeiro.valor if self.__primeiro else None
+
+    def ultimo(self):
+        return self.__ultimo.valor if self.__ultimo else None
+
     def __avisa_se_cheia(self) -> ListaCheiaException:
         if self.cheia():
             raise ListaCheiaException()
+
+    def __avisa_se_vazia(self) -> ListaVaziaException:
+        if self.vazia():
+            raise ListaVaziaException()
 
     def avanca_cursor(self, pos: int = 1, erro_se_inexistente=False) -> None:
         for _ in range(pos):
@@ -102,6 +115,7 @@ class ListaGloriosa:
 
     def inserir_como_atual(self, valor: any) -> None:
         if self.__cursor.valor is None:
+            self.__avisa_se_cheia()
             self.__n_elementos += 1
 
         self.__cursor.valor = valor
@@ -137,20 +151,28 @@ class ListaGloriosa:
         self.__n_elementos += 1
 
     def inserir_como_ultimo(self, valor: any) -> None:
-        cursor_inicio = self.__cursor
+        self.__avisa_se_cheia()
 
-        self.move_cursor_final()
-        self.inserir_apos_atual(valor)
+        if not self.vazia():
+            elemento = Elemento(valor=valor, anterior=self.__ultimo)
+            self.__ultimo.proximo = elemento
+            self.__ultimo = elemento
+        else:
+            self.__ultimo.valor = valor
 
-        self.__cursor = cursor_inicio
+        self.__n_elementos += 1
 
     def inserir_como_primeiro(self, valor: any) -> None:
-        cursor_inicio = self.__cursor
+        self.__avisa_se_cheia()
 
-        self.move_cursor_inicio()
-        self.inserir_antes_atual(valor)
+        if not self.vazia():
+            elemento = Elemento(valor=valor, proximo=self.__primeiro)
+            self.__primeiro.anterior = elemento
+            self.__primeiro = elemento
+        else:
+            self.__primeiro.valor = valor
 
-        self.__cursor = cursor_inicio
+        self.__n_elementos += 1
 
     def inserir_posicao(self, i: int, valor: any) -> None:
         self.__avisa_se_cheia()
@@ -163,6 +185,7 @@ class ListaGloriosa:
         self.__cursor = cursor_inicio
 
     def excluir_atual(self) -> None:
+        self.__avisa_se_vazia()
         atual = self.__cursor
         anterior = self.__anterior_ao_cursor()
         proximo = self.__proximo_do_cursor()
@@ -183,30 +206,31 @@ class ListaGloriosa:
         self.__n_elementos -= 1
 
     def excluir_primeiro(self) -> None:
-        cursor_inicio = self.__cursor
+        self.__avisa_se_vazia()
 
-        self.move_cursor_inicio()
-        retornar_cursor = False
-        if cursor_inicio != self.__cursor:
-            retornar_cursor = True
+        p = self.__primeiro
+        if p.proximo and p.proximo.valor is not None:
+            self.__primeiro = p.proximo
+            self.__primeiro.anterior = None
+            if p == self.__cursor:
+                self.__cursor = self.__primeiro
 
-        self.excluir_atual()
-        if retornar_cursor:
-            self.__cursor = cursor_inicio
+        self.__n_elementos -= 1
 
     def excluir_ultimo(self) -> None:
-        cursor_inicio = self.__cursor
+        self.__avisa_se_vazia()
 
-        self.move_cursor_final()
-        retornar_cursor = False
-        if cursor_inicio != self.__cursor:
-            retornar_cursor = True
+        u = self.__ultimo
+        if u.anterior and u.anterior.valor is not None:
+            self.__ultimo = u.anterior
+            self.__ultimo.proximo = None
+            if u == self.__cursor:
+                self.__cursor = self.__ultimo
 
-        self.excluir_atual()
-        if retornar_cursor:
-            self.__cursor = cursor_inicio
+        self.__n_elementos -= 1
 
     def excluir_posicao(self, i: int) -> None:
+        self.__avisa_se_vazia()
         cursor_inicio = self.__cursor
 
         self.move_cursor_posicao(i)
@@ -239,19 +263,25 @@ class ListaGloriosa:
             self.__cursor = cursor_inicio.anterior
 
     def busca(self, valor: any) -> bool:
+        cursor_inicio = self.__cursor
         self.move_cursor_inicio()
 
         for i in range(self.comprimento()):
             if self.acessa_atual() == valor:
+                self.__cursor = cursor_inicio
                 return True
             self.avanca_cursor(1)
 
+        self.__cursor = cursor_inicio
         return False
 
     def posicao_de(self, valor: any) -> int:
+        cursor_inicio = self.__cursor
         self.move_cursor_inicio()
 
         for i in range(self.comprimento()):
             if self.acessa_atual() == valor:
                 return i
             self.avanca_cursor(1)
+
+        self.__cursor = cursor_inicio
