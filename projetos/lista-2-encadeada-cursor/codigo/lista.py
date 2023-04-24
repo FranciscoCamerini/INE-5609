@@ -1,7 +1,7 @@
-from elemento import Elemento
-from exceptions import ListaCheiaException
+from .elemento import Elemento
+from .exceptions import ListaCheiaException
 
-class Lista:
+class ListaGloriosa:
     def __init__(self, max):
         self.__max = max
         self.__n_elementos = 0
