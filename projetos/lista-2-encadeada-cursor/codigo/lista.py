@@ -263,6 +263,8 @@ class ListaGloriosa:
                 if iter.proximo:
                     iter.proximo.anterior = None
 
+                self.__n_elementos -= 1
+
             iter = iter.proximo
 
     def busca(self, valor: any) -> bool:
