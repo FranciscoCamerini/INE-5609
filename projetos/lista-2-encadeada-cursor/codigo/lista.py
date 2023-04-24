@@ -1,10 +1,10 @@
-from .elemento import Elemento
+from .elemento import ElementoLista
 from .exceptions import ListaCheiaException, IndiceInexistenteException, ListaVaziaException
 
 class ListaGloriosa:
     def __init__(self, max):
         # Para facilitar algumas operações criamos um elemento fake que será nosso cursor, primeiro e ultimo elemento no início.
-        elemento_inicial_fake = Elemento(valor=None)
+        elemento_inicial_fake = ElementoLista(valor=None)
 
         self.__max = max
         self.__n_elementos = 0
@@ -41,21 +41,21 @@ class ListaGloriosa:
         if self.vazia():
             raise ListaVaziaException()
 
-    def avanca_cursor(self, pos: int = 1, erro_se_inexistente=False) -> None:
+    def __avanca_cursor(self, pos: int = 1, erro_se_inexistente=False) -> None:
         for _ in range(pos):
             if proximo := self.__cursor.proximo:
                 self.__cursor = proximo
             elif erro_se_inexistente:
                 raise IndiceInexistenteException(pos + 1)
 
-    def retrocede_cursor(self, pos: int = 1, erro_se_inexistente=False) -> None:
+    def __retrocede_cursor(self, pos: int = 1, erro_se_inexistente=False) -> None:
         for _ in range(pos):
             if anterior := self.__cursor.anterior:
                 self.__cursor = anterior
             elif erro_se_inexistente:
                 raise IndiceInexistenteException(pos - 1)
 
-    def move_cursor_posicao(self, i: int) -> None:
+    def __move_cursor_posicao(self, i: int) -> None:
         indice_ultimo = self.__n_elementos - 1
 
         if i > 0 and i > indice_ultimo:
@@ -65,20 +65,20 @@ class ListaGloriosa:
 
         # Vemos se o índice está mais próximo do inicio ou final da lista, assim, percorremos menos elementos ao deslocar o cursor.
         if i < indice_ultimo / 2 and i >= 0:
-            self.move_cursor_inicio()
-            self.avanca_cursor(i, erro_se_inexistente=True)
+            self.__move_cursor_inicio()
+            self.__avanca_cursor(i, erro_se_inexistente=True)
         else:
-            self.move_cursor_final()
+            self.__move_cursor_final()
             if i > 0:
-                self.retrocede_cursor(indice_ultimo - i, erro_se_inexistente=True)
+                self.__retrocede_cursor(indice_ultimo - i, erro_se_inexistente=True)
             else:
                 i *= -1
-                self.retrocede_cursor(i -  1, erro_se_inexistente=True)
+                self.__retrocede_cursor(i -  1, erro_se_inexistente=True)
 
-    def move_cursor_inicio(self) -> None:
+    def __move_cursor_inicio(self) -> None:
         self.__cursor = self.__primeiro
 
-    def move_cursor_final(self) -> None:
+    def __move_cursor_final(self) -> None:
         self.__cursor = self.__ultimo
 
     def __proximo_do_cursor(self) -> any:
@@ -110,7 +110,7 @@ class ListaGloriosa:
         return self.__cursor.valor
 
     def acessa_posicao(self, i: int) -> any:
-        self.move_cursor_posicao(i)
+        self.__move_cursor_posicao(i)
         return self.acessa_atual()
 
     def inserir_como_atual(self, valor: any) -> None:
@@ -122,7 +122,7 @@ class ListaGloriosa:
 
     def inserir_antes_atual(self, valor: any) -> None:
         self.__avisa_se_cheia()
-        elemento = Elemento(valor=valor, proximo=self.__cursor)
+        elemento = ElementoLista(valor=valor, proximo=self.__cursor)
 
         if anterior := self.__anterior_ao_cursor():
             elemento.anterior = anterior
@@ -137,7 +137,7 @@ class ListaGloriosa:
 
     def inserir_apos_atual(self, valor: any) -> None:
         self.__avisa_se_cheia()
-        elemento = Elemento(valor=valor, anterior=self.__cursor)
+        elemento = ElementoLista(valor=valor, anterior=self.__cursor)
 
         if proximo := self.__proximo_do_cursor():
             elemento.proximo = proximo
@@ -154,7 +154,7 @@ class ListaGloriosa:
         self.__avisa_se_cheia()
 
         if not self.vazia():
-            elemento = Elemento(valor=valor, anterior=self.__ultimo)
+            elemento = ElementoLista(valor=valor, anterior=self.__ultimo)
             self.__ultimo.proximo = elemento
             self.__ultimo = elemento
         else:
@@ -166,7 +166,7 @@ class ListaGloriosa:
         self.__avisa_se_cheia()
 
         if not self.vazia():
-            elemento = Elemento(valor=valor, proximo=self.__primeiro)
+            elemento = ElementoLista(valor=valor, proximo=self.__primeiro)
             self.__primeiro.anterior = elemento
             self.__primeiro = elemento
         else:
@@ -179,7 +179,7 @@ class ListaGloriosa:
 
         cursor_inicio = self.__cursor
 
-        self.move_cursor_posicao(i)
+        self.__move_cursor_posicao(i)
         self.inserir_como_atual(valor)
 
         self.__cursor = cursor_inicio
@@ -233,7 +233,7 @@ class ListaGloriosa:
         self.__avisa_se_vazia()
         cursor_inicio = self.__cursor
 
-        self.move_cursor_posicao(i)
+        self.__move_cursor_posicao(i)
         retornar_cursor = False
         if cursor_inicio != self.__cursor:
             retornar_cursor = True
@@ -245,43 +245,45 @@ class ListaGloriosa:
 
     def excluir_elemento(self, valor: any) -> None:
         # Excluir todos os elementos da lista com determinado valor
-        cursor_inicio = self.__cursor
-        self.move_cursor_inicio()
+        iter = self.__primeiro
+        while iter and iter.valor is not None:
+            if iter.valor == valor:
+                if iter == self.__primeiro:
+                    self.__primeiro = iter.proximo
 
-        n = self.comprimento()
-        for i in range(n):
-            if self.acessa_atual() == valor:
-                self.excluir_atual()
-            else:
-                self.avanca_cursor(1)
+                if iter == self.__ultimo:
+                    self.__ultimo = iter.anterior
 
-        if cursor_inicio.valor != valor:
-            self.__cursor = cursor_inicio
-        elif cursor_inicio.proximo and cursor_inicio.proximo.valor:
-            self.__cursor = cursor_inicio.proximo
-        elif cursor_inicio.anterior and cursor_inicio.anterior.valor:
-            self.__cursor = cursor_inicio.anterior
+                if iter == self.__cursor:
+                    if iter.proximo and iter.proximo.valor:
+                        self.__cursor = iter.proximo
+                    elif iter.anterior and iter.anterior.valor:
+                        self.__cursor = iter.anterior
+
+                if iter.proximo:
+                    iter.proximo.anterior = None
+
+            iter = iter.proximo
 
     def busca(self, valor: any) -> bool:
         cursor_inicio = self.__cursor
-        self.move_cursor_inicio()
+        self.__move_cursor_inicio()
 
-        for i in range(self.comprimento()):
+        for _ in range(self.comprimento()):
             if self.acessa_atual() == valor:
-                self.__cursor = cursor_inicio
                 return True
-            self.avanca_cursor(1)
+            self.__avanca_cursor(1)
 
         self.__cursor = cursor_inicio
         return False
 
     def posicao_de(self, valor: any) -> int:
         cursor_inicio = self.__cursor
-        self.move_cursor_inicio()
+        self.__move_cursor_inicio()
 
         for i in range(self.comprimento()):
             if self.acessa_atual() == valor:
                 return i
-            self.avanca_cursor(1)
+            self.__avanca_cursor(1)
 
         self.__cursor = cursor_inicio
