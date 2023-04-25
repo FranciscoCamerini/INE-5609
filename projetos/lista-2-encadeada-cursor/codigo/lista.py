@@ -1,3 +1,5 @@
+# Implementado por Francisco Camerini e Luiz Felipe Scheidt.
+
 from .elemento import ElementoLista
 from .exceptions import ListaCheiaException, IndiceInexistenteException, ListaVaziaException
 
@@ -261,7 +263,10 @@ class ListaGloriosa:
                         self.__cursor = iter.anterior
 
                 if iter.proximo:
-                    iter.proximo.anterior = None
+                    iter.proximo.anterior = iter.anterior
+
+                if iter.anterior:
+                    iter.anterior.proximo = iter.proximo
 
                 self.__n_elementos -= 1
 

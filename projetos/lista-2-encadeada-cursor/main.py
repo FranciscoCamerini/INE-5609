@@ -23,12 +23,27 @@ if __name__ == '__main__':
     print('\nAgora, vamos user os métodos `inserir_como_primeiro` e `inserir_como_ultimo` para adicionar alguns números à lista\n')
     tempo_pra_ler(1)
 
-    try:
-        n1 = float(input('Primeiro número: '))
-        n2 = float(input('Segundo número: '))
-        n3 = float(input('Terceiro número: '))
-    except:
-        ...
+    n1, n2, n3 = None, None, None
+    while n1 is None or n2 is None or n3 is None:
+        if n1 is None:
+            try:
+                n1 = float(input('Digite um número: '))
+            except:
+                print('O valor deve ser numérico.')
+                continue
+        if n2 is None:
+            try:
+                n2 = float(input('Outro número: '))
+            except:
+                print('O valor deve ser numérico.')
+                continue
+
+        if n3 is None:
+            try:
+                n3 = float(input('Outro número: '))
+            except:
+                print('O valor deve ser numérico.')
+                continue
 
     print('\nlista.inserir_como_primeiro(%s)' % n1)
     tempo_pra_ler(0.5)
@@ -48,7 +63,12 @@ if __name__ == '__main__':
     print('Podemos usar o método `insere_apos_atual` para inserir um novo elemento após o cursor')
     tempo_pra_ler(2.5)
     tempo_pra_ler(1.5)
-    n = float(input('\nDigite um número: '))
+    n = None
+    while n is None:
+        try:
+            n = float(input('\nDigite um número: '))
+        except:
+            print('O valor deve ser numérico.')
     print('\nlista.inserir_apos_atual(%s)\n' % n)
     tempo_pra_ler(1)
     lista.inserir_apos_atual(n)
@@ -65,7 +85,12 @@ if __name__ == '__main__':
     mostra_lista(lista)
 
     tempo_pra_ler(1)
-    n = float(input('\nEscolha um número para ser excluido: '))
+    n = None
+    while n is None:
+        try:
+            n = float(input('\nEscolha um número para ser excluido: '))
+        except:
+            print('O valor deve ser numérico.')
     tempo_pra_ler(1)
     print('lista.excluir_elemento(valor=%s)' % n)
     lista.excluir_elemento(n)
@@ -73,7 +98,13 @@ if __name__ == '__main__':
     mostra_lista(lista)
     tempo_pra_ler(1.5)
 
-    i = int(input('\nEscolha um índice da lista (0..n) para ser exclúido: '))
+    i = None
+    while i is None:
+        try:
+            i = int(input('\nEscolha um índice da lista (0..n) para ser exclúido: '))
+        except:
+            print('O valor deve ser numérico.')
+
     lista.excluir_posicao(i=i)
     print('\nlista.excluir_posicao(i=%s)' % i)
     tempo_pra_ler(1)
@@ -93,10 +124,15 @@ if __name__ == '__main__':
 
     print('\nAgora, vamos buscar por algum valor específico na lista')
     tempo_pra_ler(1)
-    n = input('Valor a ser buscado: ')
+    n = None
+    while n is None:
+        try:
+            n = float(input('\nValor a ser buscado: '))
+        except:
+            print('O valor deve ser numérico.')
     tempo_pra_ler(0.5)
     print('\nboolean = lista.busca(%s)' % n)
-    boolean = lista.busca(float(n))
+    boolean = lista.busca(n)
     print('Valor está na lista? %s' % boolean)
     tempo_pra_ler(0.5)
     mostra_lista(lista)
@@ -105,7 +141,12 @@ if __name__ == '__main__':
 
     print('\nAgora digite um valor para acharmos seu índice na lista. Se o valor não estiver na lista, o método retornará None\n')
     tempo_pra_ler(1)
-    n = float(input('Valor: '))
+    n = None
+    while n is None:
+        try:
+            n = float(input('\nValor: '))
+        except:
+            print('O valor deve ser numérico.')
     print('\ni = lista.posicao_de(valor=%s)' % n)
     tempo_pra_ler(1)
     i = lista.posicao_de(n)
@@ -113,9 +154,13 @@ if __name__ == '__main__':
 
     print('\nPor último, vamos inserir o valor 42, em um índice específico da lista. Este método suporta indexação negativa. (-1 = ultimo)')
     tempo_pra_ler(1)
-    i = int(input('Indice: '))
+    i = None
+    while i is None:
+        try:
+            i = int(input('\nÍndice: '))
+        except:
+            print('O valor deve ser numérico.')
     lista.inserir_posicao(i, 42)
     print('\nlista.inserir_posicao(%s, 42)\n' % i)
     tempo_pra_ler(1)
     mostra_lista(lista)
-
