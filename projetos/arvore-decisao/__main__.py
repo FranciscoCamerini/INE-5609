@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     try:
         roda_arvore(arvore)
-    except (BaseException, Exception) as e:
+    except Exception as e:
         logger.error(' Erro inesperado rodando árvore: %s' % e)
     else:
         logger.info(' Salvando árvore no disco, até a próxima')

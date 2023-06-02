@@ -7,12 +7,6 @@ class No:
         self.tipo = tipo or No.ANIMAL
         self.esquerda = None
         self.direita = None
-        self.pai = None
-
-    @property
-    def tipo_direita(self) -> (str or None):
-        if self.direita:
-            return self.direita.tipo
 
     @property
     def is_animal(self) -> bool:
@@ -27,7 +21,7 @@ class ArvoreDecisao:
     def __init__(self, raiz=None) -> None:
         self.raiz = raiz
 
-    def insere_pergunta(self, no_atual: No, pergunta: str, resposta_negativa: str):
+    def insere_pergunta(self, no_atual: No, pergunta: str, resposta_negativa: str) -> None:
         no_atual.direita = No(no_atual.conteudo)
         no_atual.conteudo = pergunta
         no_atual.tipo = No.PERGUNTA
