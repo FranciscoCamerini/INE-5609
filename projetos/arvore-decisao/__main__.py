@@ -1,10 +1,11 @@
 import os
 import pickle
 import logging
+from pathlib import Path
 
 from arvore_decisao import ArvoreDecisao, No
 
-PATH_ARVORE = os.path.join(os.getcwd(), 'arvore-decisao', 'persistencia', 'arvore')
+PATH_ARVORE = Path(os.path.join(Path(__file__).parent.resolve(), 'persistencia', 'arvore'))
 
 logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger('arvore-decisao')
@@ -49,11 +50,12 @@ def roda_arvore(arvore: ArvoreDecisao):
 
 
 if __name__ == '__main__':
-    if os.access(PATH_ARVORE, os.R_OK):
+    if PATH_ARVORE.exists():
         logger.info(' Carregando árvore de decisão do disco')
         with open(PATH_ARVORE, 'rb') as file:
             arvore = pickle.loads(file.read())
     else:
+        PATH_ARVORE.touch(exist_ok=True)
         logger.info(' Criando nova árvore de decisão')
         arvore = ArvoreDecisao(raiz=No('Alce'))
 
