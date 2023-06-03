@@ -35,14 +35,16 @@ def roda_arvore(arvore: ArvoreDecisao):
                 break
             else:
                 animal = input('Qual animal você pensou: ')
-                pergunta = input('Escreva uma frase que possa ser respondida de forma positiva considerando um(a) %s e negativa para um(a) %s: \n' % (no_atual.conteudo, animal))
+                pergunta = input(
+                    'Escreva uma frase que possa ser respondida de forma positiva considerando um(a) %s e negativa para um(a) %s: \n'
+                    % (no_atual.conteudo, animal)
+                )
                 arvore.insere_pergunta(no_atual, pergunta, animal)
 
                 break
         elif no_atual.is_pergunta:
             print(no_atual.conteudo)
-            resposta = pega_resposta_valida()
-            no_atual = no_atual.direita if resposta else no_atual.esquerda
+            no_atual = no_atual.direita if pega_resposta_valida() else no_atual.esquerda
 
     print('Você quer jogar novamente?')
     if pega_resposta_valida():

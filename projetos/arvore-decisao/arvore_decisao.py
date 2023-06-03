@@ -23,7 +23,7 @@ class ArvoreDecisao:
 
     def insere_pergunta(self, no_atual: No, pergunta: str, resposta_negativa: str) -> None:
         no_atual.direita = No(no_atual.conteudo)
+        no_atual.esquerda = No(resposta_negativa)
+
         no_atual.conteudo = pergunta
         no_atual.tipo = No.PERGUNTA
-
-        no_atual.esquerda = No(resposta_negativa)
