@@ -81,7 +81,7 @@ class ListaInvertida:
                 if self.dados.get(chave_obj, {}).get(coluna).lower() == valor:
                     objetos.add(chave_obj)
             except AttributeError:
-                if self.dados.get(chave_obj, {}).get(coluna).lower() == valor:
+                if self.dados.get(chave_obj, {}).get(coluna) == valor:
                     objetos.add(chave_obj)
 
         return objetos
@@ -122,10 +122,20 @@ class ListaInvertida:
     def busca(self, coluna, valor):
         coluna = coluna.strip().lower()
 
+        func = None
         if coluna in COLUNAS_VALOR_CONTINUO:
-            return self._busca_continua(coluna, valor)
+            func = self._busca_continua
         elif coluna in COLUNAS_VALOR_DISCRETO:
-            return self._busca_discreta(coluna, valor)
+            func = self._busca_discreta
+
+        if isinstance(valor, list):
+            parametros = []
+            for v in valor:
+                parametros.extend([coluna, v])
+
+            return self.busca_or(*parametros)
+        else:
+            return func(coluna, valor)
 
     def busca_or(self, *args):
         resultados = self._busca_composta(*args)
