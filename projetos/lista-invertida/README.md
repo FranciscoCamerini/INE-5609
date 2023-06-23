@@ -37,10 +37,10 @@ Realiza uma busca lógica OR na estrutura de dados. Permite buscar objetos que c
 Exemplo:
 ```python
     # Achar todos as chaves de objetos com "nome" = "Francisco" OU "nome" = "Luiz" OU "nome" = "Pedro"
-    objetos = lista.busca("nome", "francisco", "nome", "luiz", "nome", "pedro")
+    objetos = lista.busca_or("nome", "francisco", "nome", "luiz", "nome", "pedro")
 
     # Achar todos as chaves de objetos com "cidade" = "Florianopolis" OU "salario" entre 4000 e 10000
-    objetos = lista.busca("cidade", "florianopolis", "salario", [4000, 10000])
+    objetos = lista.busca_or("cidade", "florianopolis", "salario", [4000, 10000])
 ```
 
 ## Busca Lógica AND
@@ -52,7 +52,7 @@ Realiza uma busca lógica AND na estrutura de dados. Permite buscar objetos que 
 Exemplo:
 ```python
     # Achar todos as chaves de objetos com "nome" = "Francisco" AND "cidade" = "Joinville" AND "salario" entre 1200 e 3500
-    objetos = lista.busca("nome", "francisco", "cidade", "joinville", "salario", [1200, 3500])
+    objetos = lista.busca_and("nome", "francisco", "cidade", "joinville", "salario", [1200, 3500])
 ```
 
 ## Cadastro de Objeto

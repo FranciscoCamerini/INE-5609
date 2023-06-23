@@ -4,8 +4,8 @@ from pathlib import Path
 
 from utils import chave_nome, chave_salario, chave_cidade, chave_cep, chave_coluna
 
-CAMINHO_DADOS = Path(__file__).parent / "dados.json"
-CAMINHO_DIRETORIOS = Path(__file__).parent / "diretorios.json"
+CAMINHO_DADOS = Path(__file__).parent / "arquivos" / "dados.json"
+CAMINHO_DIRETORIOS = Path(__file__).parent / "arquivos" / "diretorios.json"
 
 COLUNAS_VALOR_CONTINUO = { "salario" }
 COLUNAS_VALOR_DISCRETO = { "nome", "cidade", "cep" }
@@ -69,7 +69,7 @@ class ListaInvertida:
 
     def _busca_discreta(self, coluna, valor):
         diretorio = self._pega_diretorio(coluna)
-        lista_diretorio = diretorio.get(chave_coluna(coluna, valor))
+        lista_diretorio = diretorio.get(chave_coluna(coluna, valor), [])
 
         objetos = set()
 
