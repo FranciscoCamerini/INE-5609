@@ -148,7 +148,7 @@ class ListaInvertida:
                 break
             except Exception:
                 print("Valor inválido, tente novamente")
-                self._cadastro()
+                self.cadastro()
 
         while True:
             chave_unica = str(random.randint(1, 9999))
