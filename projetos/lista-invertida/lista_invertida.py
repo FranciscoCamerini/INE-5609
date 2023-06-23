@@ -20,8 +20,11 @@ class ListaInvertida:
             "cep": {},
         }
 
-        with open(CAMINHO_DADOS, "r") as arquivo:
-            self.dados: dict = json.loads(arquivo.read())
+        if CAMINHO_DADOS.exists():
+            with open(CAMINHO_DADOS, "r") as arquivo:
+                self.dados: dict = json.loads(arquivo.read())
+        else:
+            self.dados = {}
 
         if CAMINHO_DIRETORIOS.exists():
             with open(CAMINHO_DIRETORIOS, "r") as arquivo:
@@ -37,16 +40,16 @@ class ListaInvertida:
         with open(CAMINHO_DADOS, "w") as arquivo:
             arquivo.write(json.dumps(self.dados, indent=4))
 
+    def _salva_diretorios(self):
+        CAMINHO_DIRETORIOS.touch(exist_ok=True)
+        with open(CAMINHO_DIRETORIOS, "w") as arquivo:
+            arquivo.write(json.dumps(self.diretorios, indent=4))
+
     def _insere_objeto_diretorios(self, chave_objeto, objeto):
         self._insere_diretorio("nome", chave_nome(objeto["nome"]), chave_objeto)
         self._insere_diretorio("salario", chave_salario(objeto["salario"]), chave_objeto)
         self._insere_diretorio("cidade", chave_cidade(objeto["cidade"]), chave_objeto)
         self._insere_diretorio("cep", chave_cep(objeto["cep"]), chave_objeto)
-
-    def _salva_diretorios(self):
-        CAMINHO_DIRETORIOS.touch(exist_ok=True)
-        with open(CAMINHO_DIRETORIOS, "w") as arquivo:
-            arquivo.write(json.dumps(self.diretorios, indent=4))
 
     def _insere_diretorio(self, diretorio, chave, valor):
         if isinstance(valor, str):
