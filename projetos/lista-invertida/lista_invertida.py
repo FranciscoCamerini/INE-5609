@@ -135,11 +135,17 @@ class ListaInvertida:
 
         return set()
 
-    def _cadastro(self):
-        nome = input("Nome: ").strip().lower()
-        salario = float(input("Salario: "))
-        cidade = input("Cidade: ").strip().lower()
-        cep = input("CEP: ").replace("-", "").replace(".", "")
+    def cadastro(self):
+        while True:
+            try:
+                nome = input("Nome: ").strip().lower()
+                salario = float(input("Salario: "))
+                cidade = input("Cidade: ").strip().lower()
+                cep = input("CEP: ").replace("-", "").replace(".", "")
+                break
+            except Exception:
+                print("Valor inválido, tente novamente")
+                self._cadastro()
 
         while True:
             chave_unica = str(random.randint(1, 9999))
@@ -151,17 +157,6 @@ class ListaInvertida:
                     "cep": cep,
                 }
                 break
-
-        return chave_unica
-
-    def cadastro(self):
-        chave_unica = None
-        while not chave_unica:
-            try:
-                chave_unica = self._cadastro()
-            except Exception:
-                print("Valor inválido, tente novamente")
-                self._cadastro()
 
         self._insere_objeto_diretorios(chave_unica, self.dados[chave_unica])
         self._salva_diretorios()
