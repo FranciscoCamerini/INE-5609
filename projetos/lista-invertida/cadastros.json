@@ -1,0 +1,122 @@
+{
+    "1": {
+        "nome": "Joao",
+        "salario": 2500.0,
+        "cidade": "Sao Paulo",
+        "cep": "01234-567"
+    },
+    "2": {
+        "nome": "Maria",
+        "salario": 3000.0,
+        "cidade": "Rio de Janeiro",
+        "cep": "12345-678"
+    },
+    "3": {
+        "nome": "Pedro",
+        "salario": 2800.0,
+        "cidade": "Belo Horizonte",
+        "cep": "23456-789"
+    },
+    "4": {
+        "nome": "Ana",
+        "salario": 3500.0,
+        "cidade": "Sao Paulo",
+        "cep": "34567-890"
+    },
+    "5": {
+        "nome": "Carlos",
+        "salario": 3200.0,
+        "cidade": "Curitiba",
+        "cep": "45678-901"
+    },
+    "6": {
+        "nome": "Mariana",
+        "salario": 2700.0,
+        "cidade": "Porto Alegre",
+        "cep": "56789-012"
+    },
+    "7": {
+        "nome": "Jose",
+        "salario": 2900.0,
+        "cidade": "Recife",
+        "cep": "67890-123"
+    },
+    "8": {
+        "nome": "Fernanda",
+        "salario": 3300.0,
+        "cidade": "Salvador",
+        "cep": "78901-234"
+    },
+    "9": {
+        "nome": "Rafael",
+        "salario": 3100.0,
+        "cidade": "Sao Paulo",
+        "cep": "89012-345"
+    },
+    "10": {
+        "nome": "Camila",
+        "salario": 2600.0,
+        "cidade": "Sao Paulo",
+        "cep": "90123-456"
+    },
+    "11": {
+        "nome": "Gustavo",
+        "salario": 2750.0,
+        "cidade": "Belo Horizonte",
+        "cep": "01234-567"
+    },
+    "12": {
+        "nome": "Juliana",
+        "salario": 2950.0,
+        "cidade": "Sao Paulo",
+        "cep": "12345-678"
+    },
+    "13": {
+        "nome": "Lucas",
+        "salario": 2800.0,
+        "cidade": "Rio de Janeiro",
+        "cep": "23456-789"
+    },
+    "14": {
+        "nome": "Mariana",
+        "salario": 3600.0,
+        "cidade": "Sao Paulo",
+        "cep": "34567-890"
+    },
+    "15": {
+        "nome": "Carlos",
+        "salario": 3100.0,
+        "cidade": "Curitiba",
+        "cep": "45678-901"
+    },
+    "16": {
+        "nome": "Laura",
+        "salario": 2700.0,
+        "cidade": "Florianopolis",
+        "cep": "56789-012"
+    },
+    "17": {
+        "nome": "Renato",
+        "salario": 3000.0,
+        "cidade": "Florianopolis",
+        "cep": "67890-123"
+    },
+    "18": {
+        "nome": "Gisele",
+        "salario": 2800.0,
+        "cidade": "Florianopolis",
+        "cep": "78901-234"
+    },
+    "19": {
+        "nome": "Luciana",
+        "salario": 3200.0,
+        "cidade": "Florianopolis",
+        "cep": "89012-345"
+    },
+    "3122": {
+        "nome": "sergio",
+        "salario": 13000.0,
+        "cidade": "joinville",
+        "cep": "89203025"
+    }
+}
