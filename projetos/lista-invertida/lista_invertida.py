@@ -4,8 +4,7 @@ from pathlib import Path
 
 from utils import chave_nome, chave_salario, chave_cidade, chave_cep, chave_coluna
 
-CAMINHO_DADOS = Path(__file__).parent / "arquivos" / "dados.json"
-CAMINHO_DIRETORIOS = Path(__file__).parent / "arquivos" / "diretorios.json"
+CAMINHO_DADOS = Path(__file__).parent / "dados" / "cadastros.json"
 
 COLUNAS_VALOR_CONTINUO = { "salario" }
 COLUNAS_VALOR_DISCRETO = { "nome", "cidade", "cep" }
@@ -13,7 +12,7 @@ COLUNAS_VALOR_DISCRETO = { "nome", "cidade", "cep" }
 
 class ListaInvertida:
     def __init__(self):
-        self.diretorios: dict = {
+        self.__diretorios: dict = {
             "nome": {},
             "salario": {},
             "cidade": {},
@@ -22,53 +21,42 @@ class ListaInvertida:
 
         if CAMINHO_DADOS.exists():
             with open(CAMINHO_DADOS, "r") as arquivo:
-                self.dados: dict = json.loads(arquivo.read())
+                self.__dados: dict = json.loads(arquivo.read())
         else:
-            self.dados = {}
+            self.__dados = {}
 
-        if CAMINHO_DIRETORIOS.exists():
-            with open(CAMINHO_DIRETORIOS, "r") as arquivo:
-                self.diretorios = json.loads(arquivo.read())
-        else:
-            # Monta diretórios
-            for chave_objeto, objeto in self.dados.items():
-                self._insere_objeto_diretorios(chave_objeto, objeto)
+        for chave_objeto, objeto in self.__dados.items():
+            self.__insere_objeto_diretorios(chave_objeto, objeto)
 
-            self._salva_diretorios()
-
-    def _salva_dados(self):
+    def __salva_dados(self):
         with open(CAMINHO_DADOS, "w") as arquivo:
-            arquivo.write(json.dumps(self.dados, indent=4))
+            arquivo.write(json.dumps(self.__dados, indent=4))
 
-    def _salva_diretorios(self):
-        CAMINHO_DIRETORIOS.touch(exist_ok=True)
-        with open(CAMINHO_DIRETORIOS, "w") as arquivo:
-            arquivo.write(json.dumps(self.diretorios, indent=4))
+    def __insere_objeto_diretorios(self, chave_objeto, objeto):
+        self.__insere_diretorio("nome", chave_nome(objeto["nome"]), chave_objeto)
+        self.__insere_diretorio("salario", chave_salario(objeto["salario"]), chave_objeto)
+        self.__insere_diretorio("cidade", chave_cidade(objeto["cidade"]), chave_objeto)
+        self.__insere_diretorio("cep", chave_cep(objeto["cep"]), chave_objeto)
 
-    def _insere_objeto_diretorios(self, chave_objeto, objeto):
-        self._insere_diretorio("nome", chave_nome(objeto["nome"]), chave_objeto)
-        self._insere_diretorio("salario", chave_salario(objeto["salario"]), chave_objeto)
-        self._insere_diretorio("cidade", chave_cidade(objeto["cidade"]), chave_objeto)
-        self._insere_diretorio("cep", chave_cep(objeto["cep"]), chave_objeto)
-
-    def _insere_diretorio(self, diretorio, chave, valor):
+    def __insere_diretorio(self, diretorio, chave, valor):
         if isinstance(valor, str):
             valor = valor.strip().lower()
 
-        diretorio = self.diretorios[diretorio]
+        diretorio = self.__pega_diretorio(diretorio)
         if chave in diretorio:
             diretorio[chave].append(valor)
         else:
             diretorio[chave] = [valor]
 
-    def _pega_diretorio(self, coluna):
-        if diretorio := self.diretorios.get(coluna):
-            return diretorio
+    def __pega_diretorio(self, coluna):
+        diretorio = self.__diretorios.get(coluna)
+        if not isinstance(diretorio, dict):
+            raise ValueError('Objeto não possui coluna "%s"' % coluna)
 
-        raise ValueError('Objeto não possui coluna "%s"' % coluna)
+        return diretorio
 
-    def _busca_discreta(self, coluna, valor):
-        diretorio = self._pega_diretorio(coluna)
+    def __busca_discreta(self, coluna, valor):
+        diretorio = self.__pega_diretorio(coluna)
         lista_diretorio = diretorio.get(chave_coluna(coluna, valor), [])
 
         objetos = set()
@@ -78,15 +66,15 @@ class ListaInvertida:
 
         for chave_obj in lista_diretorio:
             try:
-                if self.dados.get(chave_obj, {}).get(coluna).lower() == valor:
+                if self.pega_objeto(chave_obj, {}).get(coluna).lower() == valor:
                     objetos.add(chave_obj)
             except AttributeError:
-                if self.dados.get(chave_obj, {}).get(coluna) == valor:
+                if self.pega_objeto(chave_obj, {}).get(coluna) == valor:
                     objetos.add(chave_obj)
 
         return objetos
 
-    def _busca_continua(self, coluna, intervalo: tuple):
+    def __busca_continua(self, coluna, intervalo: tuple):
         try:
             inicio, fim = intervalo[0], intervalo[1]
         except Exception:
@@ -97,18 +85,18 @@ class ListaInvertida:
 
         chave_inicio = chave_coluna(coluna, inicio)
         chave_fim = chave_coluna(coluna, fim)
-        diretorio = self._pega_diretorio(coluna)
+        diretorio = self.__pega_diretorio(coluna)
 
         alvos = set()
         for i in range(int(chave_inicio), int(chave_fim) + 1):
             lista = diretorio.get(str(i) + '.0', [])
             for chave in lista:
-                if inicio <= self.dados[chave][coluna] <= fim:
+                if inicio <= self.pega_objeto(chave)[coluna] <= fim:
                     alvos.add(chave)
 
         return alvos
 
-    def _busca_composta(self, *args):
+    def __busca_composta(self, *args):
         if len(args) % 2 != 0:
             raise ValueError("Argumentos inválidos para busca composta")
 
@@ -124,9 +112,9 @@ class ListaInvertida:
 
         func = None
         if coluna in COLUNAS_VALOR_CONTINUO:
-            func = self._busca_continua
+            func = self.__busca_continua
         elif coluna in COLUNAS_VALOR_DISCRETO:
-            func = self._busca_discreta
+            func = self.__busca_discreta
 
         if isinstance(valor, list):
             parametros = []
@@ -138,12 +126,11 @@ class ListaInvertida:
             return func(coluna, valor)
 
     def busca_or(self, *args):
-        resultados = self._busca_composta(*args)
-
+        resultados = self.__busca_composta(*args)
         return set().union(*resultados)
 
     def busca_and(self, *args):
-        if resultados := self._busca_composta(*args):
+        if resultados := self.__busca_composta(*args):
             return resultados[1].intersection(*resultados[1:])
 
         return set()
@@ -162,8 +149,8 @@ class ListaInvertida:
 
         while True:
             chave_unica = str(random.randint(1, 9999))
-            if not self.dados.get(chave_unica):
-                self.dados[chave_unica] = {
+            if not self.pega_objeto(chave_unica):
+                self.__dados[chave_unica] = {
                     "nome": nome,
                     "salario": salario,
                     "cidade": cidade,
@@ -171,6 +158,8 @@ class ListaInvertida:
                 }
                 break
 
-        self._insere_objeto_diretorios(chave_unica, self.dados[chave_unica])
-        self._salva_diretorios()
-        self._salva_dados()
+        self.__insere_objeto_diretorios(chave_unica, self.pega_objeto(chave_unica))
+        self.__salva_dados()
+
+    def pega_objeto(self, chave, default=None):
+        return self.__dados.get(chave, default)
