@@ -3,7 +3,7 @@ def chave_nome(valor):
 
 
 def chave_salario(valor):
-    return str(valor // 1200)
+    return int(valor // 1200)
 
 
 def chave_cidade(valor):

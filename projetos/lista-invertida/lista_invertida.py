@@ -4,7 +4,7 @@ from pathlib import Path
 
 from utils import chave_nome, chave_salario, chave_cidade, chave_cep, chave_coluna
 
-CAMINHO_DADOS = Path(__file__).parent / "dados" / "cadastros.json"
+CAMINHO_DADOS = Path(__file__).parent / "cadastros.json"
 
 COLUNAS_VALOR_CONTINUO = { "salario" }
 COLUNAS_VALOR_DISCRETO = { "nome", "cidade", "cep" }
@@ -44,9 +44,9 @@ class ListaInvertida:
 
         diretorio = self.__pega_diretorio(diretorio)
         if chave in diretorio:
-            diretorio[chave].append(valor)
+            diretorio[str(chave)].append(valor)
         else:
-            diretorio[chave] = [valor]
+            diretorio[str(chave)] = [valor]
 
     def __pega_diretorio(self, coluna):
         diretorio = self.__diretorios.get(coluna)
@@ -65,21 +65,22 @@ class ListaInvertida:
             valor = valor.strip().lower()
 
         for chave_obj in lista_diretorio:
-            try:
-                if self.pega_objeto(chave_obj, {}).get(coluna).lower() == valor:
-                    objetos.add(chave_obj)
-            except AttributeError:
-                if self.pega_objeto(chave_obj, {}).get(coluna) == valor:
-                    objetos.add(chave_obj)
+            if cadastro := self.pega_cadastro(chave_obj):
+                try:
+                    if cadastro[coluna].lower() == valor:
+                        objetos.add(chave_obj)
+                except AttributeError:
+                    if cadastro[coluna] == valor:
+                        objetos.add(chave_obj)
 
         return objetos
 
-    def __busca_continua(self, coluna, intervalo: tuple):
+    def __busca_continua(self, coluna, intervalo):
         try:
             inicio, fim = intervalo[0], intervalo[1]
         except Exception:
-            return ValueError(
-                'Valor de busca para coluna quantitativa "%s" deve ser um iteravel contendo inicio e fim do intervalo'
+            raise ValueError(
+                'Valor de busca para coluna continua "%s" deve ser um iteravel contendo inicio e fim do intervalo'
                 % coluna
             )
 
@@ -89,9 +90,9 @@ class ListaInvertida:
 
         alvos = set()
         for i in range(int(chave_inicio), int(chave_fim) + 1):
-            lista = diretorio.get(str(i) + '.0', [])
+            lista = diretorio.get(str(i), [])
             for chave in lista:
-                if inicio <= self.pega_objeto(chave)[coluna] <= fim:
+                if inicio <= self.pega_cadastro(chave)[coluna] <= fim:
                     alvos.add(chave)
 
         return alvos
@@ -110,20 +111,26 @@ class ListaInvertida:
     def busca(self, coluna, valor):
         coluna = coluna.strip().lower()
 
-        func = None
-        if coluna in COLUNAS_VALOR_CONTINUO:
-            func = self.__busca_continua
-        elif coluna in COLUNAS_VALOR_DISCRETO:
-            func = self.__busca_discreta
-
-        if isinstance(valor, list):
+        def busca_multiplos_valores(coluna, valores):
             parametros = []
-            for v in valor:
+            for v in valores:
                 parametros.extend([coluna, v])
 
             return self.busca_or(*parametros)
-        else:
-            return func(coluna, valor)
+
+        if coluna in COLUNAS_VALOR_CONTINUO:
+            if not isinstance(valor, (list, tuple, set)):
+                raise ValueError("Valor para busca continua deve ser um iteravel representando um intervalo: %s" % valor)
+
+            if any([isinstance(v, (list, tuple, set)) for v in valor]):
+                return busca_multiplos_valores(coluna, valor)
+
+            return self.__busca_continua(coluna, valor)
+        elif coluna in COLUNAS_VALOR_DISCRETO:
+            if isinstance(valor, (list, tuple, set)):
+                return busca_multiplos_valores(coluna, valor)
+
+            return self.__busca_discreta(coluna, valor)
 
     def busca_or(self, *args):
         resultados = self.__busca_composta(*args)
@@ -131,7 +138,7 @@ class ListaInvertida:
 
     def busca_and(self, *args):
         if resultados := self.__busca_composta(*args):
-            return resultados[1].intersection(*resultados[1:])
+            return resultados[0].intersection(*resultados[1:])
 
         return set()
 
@@ -149,7 +156,7 @@ class ListaInvertida:
 
         while True:
             chave_unica = str(random.randint(1, 9999))
-            if not self.pega_objeto(chave_unica):
+            if not self.pega_cadastro(chave_unica):
                 self.__dados[chave_unica] = {
                     "nome": nome,
                     "salario": salario,
@@ -158,8 +165,21 @@ class ListaInvertida:
                 }
                 break
 
-        self.__insere_objeto_diretorios(chave_unica, self.pega_objeto(chave_unica))
+        self.__insere_objeto_diretorios(chave_unica, self.pega_cadastro(chave_unica))
         self.__salva_dados()
 
-    def pega_objeto(self, chave, default=None):
-        return self.__dados.get(chave, default)
+    def pega_cadastro(self, chave):
+        if isinstance(chave, (list, tuple, set)):
+            return [self.pega_cadastro(c) for c in chave]
+
+        return self.__dados.get(str(chave))
+
+    def remove_cadastro(self, chave):
+        self.__dados.pop(chave, None)
+
+    def pega_dados(self):
+        return self.__dados
+
+    @property
+    def diretorios(self):
+        return self.__diretorios
